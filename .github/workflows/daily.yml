@@ -1,0 +1,27 @@
+name: Tagesschau Bot Lauf
+on:
+  schedule:
+    - cron: '30 19 * * *' # 20:30 Uhr deutsche Zeit
+  workflow_dispatch: # Erlaubt manuellen Start per Klick
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - name: Run script
+        run: node --env-file=.env scripts/summarize.mjs
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          MY_EMAIL: ${{ secrets.MY_EMAIL }}
+      - name: Save changes
+        run: |
+          git config --global user.name 'Tagesschau Bot'
+          git config --global user.email 'bot@github.com'
+          git add public/data.json
+          git commit -m "Update: Neue Zusammenfassung" || exit 0
+          git push
