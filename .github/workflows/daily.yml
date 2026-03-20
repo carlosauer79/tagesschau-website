@@ -1,8 +1,8 @@
 name: Tagesschau Bot Lauf
 on:
   schedule:
-    - cron: '30 19 * * *' # 20:30 Uhr deutsche Zeit
-  workflow_dispatch: # Erlaubt manuellen Start per Klick
+    - cron: '30 19 * * *'
+  workflow_dispatch:
 jobs:
   run-bot:
     runs-on: ubuntu-latest
@@ -13,7 +13,7 @@ jobs:
           node-version: 22
       - run: npm install
       - name: Run script
-        run: node --env-file=.env scripts/summarize.mjs
+        run: node scripts/summarize.mjs
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
